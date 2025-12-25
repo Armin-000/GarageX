@@ -1,0 +1,28 @@
+{
+  "name": "car-garage",
+  "version": "1.0.0",
+  "description": "Simple full-stack car CRUD app (Express + SQLite + vanilla JS).",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [
+    "express",
+    "sqlite",
+    "crud",
+    "cars",
+    "api"
+  ],
+  "author": "Armin",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}

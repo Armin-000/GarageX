@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Car Garage Pro – Fleet Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-logo">CG</div>
+        <div>
+          <h1>Car Garage Pro</h1>
+          <p>Pametna kontrolna ploča za upravljanje voznim parkom</p>
+        </div>
+      </div>
+      <button id="add-car-btn" class="primary-btn">
+        + Novi automobil
+      </button>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <section class="panel stats-panel">
+          <h2>Statistika</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-label">Ukupno</span>
+              <span class="stat-value" id="stat-total">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Dostupni</span>
+              <span class="stat-value" id="stat-available">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Rezervirani</span>
+              <span class="stat-value" id="stat-reserved">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Prodani</span>
+              <span class="stat-value" id="stat-sold">0</span>
+            </div>
+            <div class="stat-card wide">
+              <span class="stat-label">Prosječna cijena</span>
+              <span class="stat-value" id="stat-avg-price">0 €</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel filters-panel">
+          <h2>Filteri</h2>
+          <div class="field">
+            <label for="search-input">Pretraživanje (marka/model)</label>
+            <input
+              type="search"
+              id="search-input"
+              placeholder="Npr. Astra, Golf..."
+            />
+          </div>
+          <div class="field">
+            <label for="status-filter">Status</label>
+            <select id="status-filter">
+              <option value="">Svi</option>
+              <option value="available">Dostupni</option>
+              <option value="reserved">Rezervirani</option>
+              <option value="sold">Prodani</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sort-by">Sortiraj po</label>
+            <select id="sort-by">
+              <option value="created_at">Datumu unosa</option>
+              <option value="price">Cijeni</option>
+              <option value="year">Godini</option>
+              <option value="mileage">Kilometraži</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sort-dir">Smjer</label>
+            <select id="sort-dir">
+              <option value="DESC">Najnovije / najveće prvo</option>
+              <option value="ASC">Najstarije / najmanje prvo</option>
+            </select>
+          </div>
+          <button id="reset-filters-btn" class="secondary-btn">
+            Resetiraj filtere
+          </button>
+        </section>
+      </aside>
+
+      <section class="content">
+        <section class="panel list-panel">
+          <div class="list-header">
+            <h2>Vozila</h2>
+            <span id="list-subtitle" class="list-subtitle"></span>
+          </div>
+
+          <div class="table-wrapper">
+            <table id="cars-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Vozilo</th>
+                  <th>God.</th>
+                  <th>KM</th>
+                  <th>Gorivo</th>
+                  <th>Mjenjač</th>
+                  <th>Status</th>
+                  <th>Cijena</th>
+                  <th>Akcije</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- puni se iz JS-a -->
+              </tbody>
+            </table>
+          </div>
+          <p id="message" class="message"></p>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal za dodavanje / uređivanje auta -->
+  <div class="modal-backdrop" id="car-modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="car-modal-title">
+      <header class="modal-header">
+        <h2 id="car-modal-title">Novi automobil</h2>
+        <button class="icon-btn" id="modal-close-btn" aria-label="Zatvori">
+          ×
+        </button>
+      </header>
+      <form id="car-form" class="modal-body">
+        <input type="hidden" id="car-id" />
+
+        <div class="field two-col">
+          <div>
+            <label for="make">Marka *</label>
+            <input type="text" id="make" name="make" required />
+          </div>
+          <div>
+            <label for="model">Model *</label>
+            <input type="text" id="model" name="model" required />
+          </div>
+        </div>
+
+        <div class="field three-col">
+          <div>
+            <label for="year">Godina *</label>
+            <input type="number" id="year" name="year" min="1950" max="2100" required />
+          </div>
+          <div>
+            <label for="mileage">Kilometraža (km)</label>
+            <input type="number" id="mileage" name="mileage" min="0" />
+          </div>
+          <div>
+            <label for="price">Cijena (€) *</label>
+            <input type="number" step="0.01" id="price" name="price" required />
+          </div>
+        </div>
+
+        <div class="field three-col">
+          <div>
+            <label for="fuel_type">Gorivo</label>
+            <select id="fuel_type" name="fuel_type">
+              <option value="">Nije odabrano</option>
+              <option value="diesel">Dizel</option>
+              <option value="petrol">Benzin</option>
+              <option value="hybrid">Hibrid</option>
+              <option value="electric">Električni</option>
+            </select>
+          </div>
+          <div>
+            <label for="transmission">Mjenjač</label>
+            <select id="transmission" name="transmission">
+              <option value="">Nije odabrano</option>
+              <option value="manual">Ručni</option>
+              <option value="automatic">Automatski</option>
+            </select>
+          </div>
+          <div>
+            <label for="status">Status</label>
+            <select id="status" name="status">
+              <option value="available">Dostupan</option>
+              <option value="reserved">Rezerviran</option>
+              <option value="sold">Prodan</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="secondary-btn" id="modal-cancel-btn">
+            Odustani
+          </button>
+          <button type="submit" class="primary-btn" id="modal-save-btn">
+            Spremi
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
